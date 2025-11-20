@@ -2,6 +2,7 @@
 
 # Add this line to integrate your Flutter module.
 # Make sure the path is correct.
+# flutter_module工程git地址 https://github.com/zyd806094224/lib_flutter
 flutter_application_path = '/Users/zhaoyudong/FlutterProjects/lib_flutter'
 load File.join(flutter_application_path, '.ios', 'Flutter', 'podhelper.rb')
 
