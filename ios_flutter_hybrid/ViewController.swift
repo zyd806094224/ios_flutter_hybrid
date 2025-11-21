@@ -41,15 +41,23 @@ class ViewController: UIViewController {
         //    这个字符串的格式需要和安卓端以及Flutter端解析的格式完全一致。
         let route = "/custom_flutter_page?id=456&name=DataFromiOS"
         
-        // 2. 创建 FlutterViewController。
-        //    这是 Flutter 官方推荐的、用于展示 Flutter 页面的标准方式。
-        //    我们直接在构造函数中传入 `initialRoute`，这比旧的 `setInitialRoute` 方法更可靠。
-        let flutterViewController = FlutterViewController(project: nil, initialRoute: route, nibName: nil, bundle: nil)
+        // 2. 从 AppDelegate 获取预热好的共享 FlutterEngine。
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+            fatalError("Could not get AppDelegate")
+        }
+        let flutterEngine = appDelegate.flutterEngine
         
-        // 3. 为即将打开的 Flutter 页面设置原生通信通道。
+        // 3. 使用共享引擎创建 FlutterViewController。
+        //    这种方式可以秒开 Flutter 页面，极大提升用户体验。
+        let flutterViewController = FlutterViewController(engine: flutterEngine, nibName: nil, bundle: nil)
+        
+        // 4. 为本次展示推送新路由。对于已在运行的引擎，pushRoute 更合适。
+        flutterViewController.pushRoute(route)
+        
+        // 5. 为即将打开的 Flutter 页面设置原生通信通道。
         setupMethodChannel(for: flutterViewController, route: route)
         
-        // 4. 使用导航控制器 (UINavigationController) 跳转到 Flutter 页面。
+        // 6. 使用导航控制器 (UINavigationController) 跳转到 Flutter 页面。
         self.navigationController?.pushViewController(flutterViewController, animated: true)
     }
     
